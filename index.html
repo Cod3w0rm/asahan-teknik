@@ -198,14 +198,29 @@
       color: var(--gray);
       font-size: 0.9rem;
     }
-/* NAV DESKTOP / MOBILE */
+/* =========================
+   NAVIGATION (CLEAN)
+========================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+/* Desktop */
 .nav-links {
   display: flex;
 }
 
+/* Burger */
 .burger {
   display: none;
   flex-direction: column;
+  background: none;
+  border: none;
   cursor: pointer;
 }
 
@@ -214,16 +229,41 @@
   height: 2px;
   background: var(--dark);
   margin: 4px 0;
-  transition: 0.3s;
 }
 
-/* OVERLAY */
-.overlay {
+/* Mobile Menu (OFF-CANVAS) */
+.mobile-menu {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
+  right: -100%;
+  width: 260px;
   height: 100vh;
+  background: var(--white);
+  padding: 90px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: right 0.3s ease;
+  z-index: 150;
+}
+
+.mobile-menu a {
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--dark);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+/* Active */
+.mobile-menu.active {
+  right: 0;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
   background: rgba(0,0,0,.45);
   opacity: 0;
   visibility: hidden;
@@ -231,43 +271,17 @@
   z-index: 140;
 }
 
-/* MOBILE MENU */
-.mobile-menu a {
-  display: block;
-  width: 100%;
-  padding: 14px 0;
-  margin-bottom: 12px;
-
-  font-size: 1.2rem;
-  font-weight: 500;
-
-  color: var(--dark);
-  text-decoration: none;
-  border-bottom: 1px solid var(--border);
-}
- .mobile-menu {
-  display: flex;
-  flex-direction: column;
-}
- .mobile-menu a:hover {
-  color: var(--accent);
-}
-/* ACTIVE STATES */
-.mobile-menu.active {
-  right: 0;
-}
-
 .overlay.active {
   opacity: 1;
   visibility: visible;
 }
 
-/* LOCK SCROLL */
+/* Lock scroll */
 body.lock {
   overflow: hidden;
 }
 
-/* RESPONSIVE */
+/* Responsive */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
@@ -277,68 +291,9 @@ body.lock {
     display: flex;
   }
 }
-/* HIDE MOBILE MENU ON DESKTOP */
-.mobile-menu,
-.overlay,
-.burger {
-  display: none;
-}
-    /* ============================= */
-/* MOBILE NAV VISIBILITY CONTROL */
-/* ============================= */
-
-/* Hide mobile-only elements on desktop */
-.mobile-menu,
-.overlay,
-.burger {
-  display: none;
-}
-
-/* Enable mobile navigation only on small screens */
-@media (max-width: 768px) {
-  .burger {
-    display: flex;
-  }
-
-  .mobile-menu {
-    display: flex;
-  }
-
-  .overlay {
-    display: block;
-  }
-
-  .nav-links {
-    display: none;
-  }
-}
-  </style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-container">
-    <div class="logo">Asahan Teknik</div>
-
-    <!-- Desktop Menu -->
-    <div class="nav-links">
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
-    </div>
-
-    <!-- Burger Button -->
-    <div class="burger" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
 </nav>
 
-<!-- Mobile Slide Menu -->
+<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#about" onclick="toggleMenu()">About</a>
   <a href="#services" onclick="toggleMenu()">Services</a>
@@ -346,6 +301,7 @@ body.lock {
   <a href="#contact" onclick="toggleMenu()">Contact</a>
 </div>
 
+<!-- Overlay -->
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 <!-- HERO -->
@@ -557,35 +513,28 @@ body.lock {
 <footer>
   © 2025 Asahan Teknik (Astek)
 </footer>
-<script>
+<<script>
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("overlay");
+
+  let startX = 0;
+
   function toggleMenu() {
-    document.getElementById("mobileMenu").classList.toggle("active");
+    menu.classList.toggle("active");
+    overlay.classList.toggle("active");
+    document.body.classList.toggle("lock");
   }
-</script>
-<!-- MOBILE MENU SCRIPT -->
-  <script>
-    const menu = document.getElementById("mobileMenu");
-    const overlay = document.getElementById("overlay");
 
-    let startX = 0;
+  // Swipe to close
+  menu.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
 
-    function toggleMenu() {
-      menu.classList.toggle("active");
-      overlay.classList.toggle("active");
-      document.body.classList.toggle("lock");
+  menu.addEventListener("touchmove", e => {
+    if (e.touches[0].clientX - startX > 80) {
+      toggleMenu();
     }
-
-    // Swipe to close
-    menu.addEventListener("touchstart", e => {
-      startX = e.touches[0].clientX;
-    });
-
-    menu.addEventListener("touchmove", e => {
-      let currentX = e.touches[0].clientX;
-      if (currentX - startX > 80) {
-        toggleMenu();
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
